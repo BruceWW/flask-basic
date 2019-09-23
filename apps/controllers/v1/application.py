@@ -24,7 +24,7 @@ class App(BaseResource):
         app_name = str_checker(app_name, is_html_encode=True)
         app_info = Application().get_app_id_by_name(app_name)
         if app_info is None:
-            abort(404, '应用：%s查询失败' % app_name)
+            return self.error_404('应用：%s查询失败' % app_name)
         else:
             return self.succeed('应用查找成功', app_info)
 
@@ -41,7 +41,7 @@ class App(BaseResource):
         content = str_checker(info.get_param('content'), default=True, is_html_encode=True)
         app_id = app.get_app_id_by_name(app_name)
         if app_id is False:
-            abort(404, '应用：%s更新失败' % app_name)
+            return self.error_404('应用：%s更新失败' % app_name)
         app.update(app_id, content=content)
         return self.succeed('应用：%s更新成功' % app_name)
 
@@ -53,10 +53,10 @@ class App(BaseResource):
         """
         app = Application()
         if not app.check_role():
-            abort(403, '没有权限操作应用')
+            return self.error_403('没有权限操作应用')
         app_id = app.get_app_id_by_name(app_name)
         if app_id is False:
-            abort(404, '应用：%s删除失败' % app_name)
+            return self.error_404('应用：%s删除失败' % app_name)
         app.delete(app_id)
         return self.succeed('应用：%s删除成功' % app_name)
 
@@ -91,7 +91,7 @@ class AppList(BaseResource):
             app.create(name=app_name, content=content)
             return self.succeed('应用创建成功')
         else:
-            abort(400, '应用名已被占用')
+            return self.error_400('应用名已被占用')
 
 
 class AppToken(BaseResource):
@@ -112,8 +112,8 @@ class AppToken(BaseResource):
         app_name = str_checker(app_name, is_html_encode=True)
         app = Application()
         if not app.check_role():
-            abort(403, '没有权限操作应用')
+            return self.error_403('没有权限操作应用')
         if not app.get_app_id_by_name(app_name):
-            abort(400, '应用名错误')
+            return self.error_404('应用名错误')
         app.update_token(app_name)
         return self.succeed('应用token更新成功')
