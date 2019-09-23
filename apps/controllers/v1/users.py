@@ -5,12 +5,14 @@
 # @Site    :
 # @File    : users
 # @Software: PyCharm
-from common.utils.base_resource import BaseResource
-from ..domain.users import User
+from hashlib import sha256
+
 from flask import abort, session
+
+from apps.domain.users import User
+from common.utils.base_resource import BaseResource
 from common.utils.format_request import Request
 from common.utils.value_checker import int_checker, str_checker
-from hashlib import sha256
 
 
 class UserOperator(BaseResource):

@@ -30,12 +30,12 @@ class BaseResource(Resource):
         return self._app
 
     def succeed(self, message=None, info=None, **kwargs):
-        return jsonify(self.format_result(200, 'success' if message is None else message, info, **kwargs))
+        return self.format_result(200, 'success' if message is None else message, info, **kwargs)
 
     @staticmethod
     def format_result(code=200, message=None, info=None, **kwargs):
         """
-
+        
         :param code:
         :param message:
         :param info:
