@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time    : 2019/9/13 13:58
-# @Author  : liuyang
-# @Site    : 
+# @Author  : Lin Luo
+# @Site    :
 # @File    : file
 # @Software: PyCharm
 from os import path

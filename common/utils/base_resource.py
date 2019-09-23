@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time    : 2019/9/14 13:25
-# @Author  : liuyang
+# @Author  : Lin Luo
 # @Site    :
 # @File    : base_resource
 # @Software: PyCharm
@@ -35,7 +35,7 @@ class BaseResource(Resource):
     @staticmethod
     def format_result(code=200, message=None, info=None, **kwargs):
         """
-        
+
         :param code:
         :param message:
         :param info:

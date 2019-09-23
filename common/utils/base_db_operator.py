@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time    : 2019/9/11 21:12
-# @Author  : liuyang
+# @Author  : Lin Luo
 # @Site    :
 # @File    : base_db_operator
 # @Software: PyCharm

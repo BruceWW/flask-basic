@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time    : 2019/9/13 14:00
-# @Author  : liuyang
-# @Site    : 
+# @Author  : Lin Luo
+# @Site    :
 # @File    : format_time
 # @Software: PyCharm
 from time import time, strftime, strptime, localtime, mktime

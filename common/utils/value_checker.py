@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time    : 2019/9/14 12:10
-# @Author  : liuyang
-# @Site    : 
+# @Author  : Lin Luo
+# @Site    :
 # @File    : value_checker
 # @Software: PyCharm
 from html import escape
