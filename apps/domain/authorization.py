@@ -23,7 +23,8 @@ class Authorization(object):
         :return:
         """
         info = db.session.query(Users).filter(
-            and_(Users.username == username, Users.password == sha256(password.encode('utf-8')).hexdigest())).first()
+            and_(Users.username == username, Users.password == sha256(password.encode('utf-8')).hexdigest()),
+            Users.is_del == 0).first()
         if info is None:
             return False
         else:

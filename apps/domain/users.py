@@ -21,12 +21,11 @@ class User(BaseDBOperator):
 
     def query(self, instance_id):
         info = super().query(instance_id)
-        if info is None:
-            return info
-        else:
-            del info['password']
-            del info['create_user_id']
-            del info['create_time']
+        if info is not None:
+            info.pop('password')
+            info.pop('create_user_id')
+            info.pop('create_time')
+        return info
 
     @staticmethod
     def get_list(username, page_size=10, page_index=1):
@@ -42,7 +41,11 @@ class User(BaseDBOperator):
             Users.username.like('%%%s%%' % username), Users.is_del == 0)).slice(current_num - page_size,
                                                                                 current_num).all()
         user_num = db.session.query(func.count(Users.id)).filter(
-            and_(Users.username.like('%%%s%%' % username), Users.is_del == 0)).all()
+            and_(Users.username.like('%%%s%%' % username), Users.is_del == 0)).first()[0]
+        # TODO 需要把role转换为角色名称
+        for i in range(len(user_list)):
+            user_list[i] = {'user_id': user_list[i][0], 'user_name': user_list[i][1], 'content': user_list[i][2],
+                            'role': user_list[i][3]}
         return {'list': user_list,
                 'page_info': {'page_num': user_num / page_size, 'page_index': page_index, 'page_size': page_size,
                               'total_num': user_num}}

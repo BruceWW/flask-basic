@@ -17,9 +17,7 @@ class Request(object):
         初始化
         """
         self._request = request
-        if self._request.method == 'PUT':
-            self._dicts = self._request.json
-        elif self._request.method == 'POST':
+        if self._request.method in ('POST', 'PUT'):
             if self._request.json is not None:
                 self._dicts = self._request.json
             elif len(self._request.form) != 0:

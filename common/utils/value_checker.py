@@ -64,6 +64,8 @@ def int_checker(num, min_num=None, max_num=None, min_line=True, max_line=True, d
     except ValueError:
         # 如果不是整型
         return default
+    except TypeError:
+        return default
 
 
 def float_checker(num, min_num=None, max_num=None, min_line=True, max_line=True, default=0):
@@ -99,9 +101,17 @@ def str_checker(value, min_length=None, max_length=None, min_line=True, max_line
     """
     try:
         # 对字符串长度进行判断
+        if value is None:
+            return default
         checker = num_checker(len(value), min_length, max_length, min_line, max_line, None)
+        if checker is not None:
+            checker = value
+        else:
+            checker = default
         # 如果返回None，则说明异常，返回默认值
         if checker is None:
+            if default is None:
+                return None
             return escape(default) if is_html_encode else default
         else:
             return escape(checker) if is_html_encode else checker

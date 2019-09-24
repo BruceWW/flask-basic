@@ -6,6 +6,7 @@
 # @File    : __init__.py
 # @Software: PyCharm
 from os import urandom
+
 __all__ = ['dev', 'sit', 'uat', 'prod']
 
 
@@ -34,6 +35,9 @@ class BaseConfig(object):
     # 图片后缀
     IMAGE_EXTENSIONS = ('png', 'jpg', 'jpeg', 'gif')
 
+    # 不需要鉴权的路由
+    EXCEPT_URL = ['/login']
+
     # 允许上船的文件后缀
     FILE_EXTENSIONS = ('xls', 'doc', 'ppt', 'xlsx', 'docx', 'pptx', 'txt', 'rar', 'zip', 'png', 'jpg', 'jpeg', 'gif')
 
@@ -43,5 +47,3 @@ class BaseConfig(object):
     PERMANENT_SESSION_LIFETIME = 600
     SESSION_USE_SIGNER = True
     SESSION_TYPE = 'redis'
-
-

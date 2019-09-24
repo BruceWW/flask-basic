@@ -5,7 +5,7 @@
 # @Site    :
 # @File    : common_request
 # @Software: PyCharm
-from flask import jsonify
+from flask import jsonify, request, session, abort
 
 from application import app
 
@@ -21,7 +21,15 @@ def before_request():
     验证用户登录
     :return:
     """
-    print(123)
+    # 如果属于定义的特殊路由，则不进行权限判断
+    # if request.path in app.config.get('EXCEPT_URL'):
+    #     pass
+    # else:
+    #     if session.get('admin_user_id') is None:
+    #         abort(401)
+    session['admin_user_id'] = 2
+    session['role'] = 1
+    session['admin_user'] = 'admin'
 
 
 @app.errorhandler(400)
@@ -31,7 +39,7 @@ def error_400(e=None):
     :param e:
     :return:
     """
-    return jsonify({'status_code': 400, 'message': e})
+    return jsonify({'status_code': 400, 'message': str(e)})
 
 
 @app.errorhandler(401)
@@ -101,4 +109,4 @@ def teardown_request(e=None):
     :param e:
     :return:
     """
-    print(234)
+    pass

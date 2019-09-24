@@ -47,6 +47,7 @@ class BaseDBOperator(object):
             instance = self._abstraction.query.filter(self._abstraction.id == instance_id).first()
             db.session.delete(instance)
             db.session.commit()
+            return True
 
     def update(self, instance_id, **kwargs):
         """
@@ -58,15 +59,15 @@ class BaseDBOperator(object):
         instance = self._abstraction.query.filter(self._abstraction.id == instance_id).first()
         if instance is None:
             return None
-        for key in kwargs.keys():
-            if hasattr(instance, key):
-                setattr(instance, key, kwargs.get(key))
-            if hasattr(instance, 'update_time'):
-                instance.update_time = time()
-            if hasattr(instance, 'update_user_id'):
-                instance.update_user_id = session.get('admin_user_id')
-            db.session.commit()
-            return instance.id
+        for key, value in kwargs.items():
+            if hasattr(instance, key) and value is not None:
+                setattr(instance, key, value)
+        if hasattr(instance, 'update_time'):
+            instance.update_time = time()
+        if hasattr(instance, 'update_user_id'):
+            instance.update_user_id = session.get('admin_user_id')
+        db.session.commit()
+        return instance.id
 
     def query(self, instance_id):
         """
@@ -74,9 +75,8 @@ class BaseDBOperator(object):
         :param instance_id:
         :return:
         """
-        # instance = db.session.query(self._abstraction).filter(self._abstraction.id == instance_id).first()
-        instance = self._abstraction.query(self._abstraction.id == instance_id).first()
+        instance = db.session.query(self._abstraction).filter(self._abstraction.id == instance_id).first()
         if instance is None:
-            return False
+            return None
         else:
             return instance.to_dict()

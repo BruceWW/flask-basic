@@ -14,7 +14,7 @@ from common.utils.base_resource import BaseResource
 from common.utils.format_request import Request
 from common.utils.value_checker import int_checker, str_checker
 
-
+# TODO 需要加一个改密码的功能
 class UserOperator(BaseResource):
     def get(self, user_id):
         """
@@ -39,24 +39,20 @@ class UserOperator(BaseResource):
         user_id = int(user_id)
         user_object = User()
         username = str_checker(info.get_param('username'), 5, 20, default=None)
-        password = str_checker((info.get_param('password')), 8, default=None)
-        role_id = int_checker(info.get_param('role_id'), 1, 3, default=3)
+        role_id = int_checker(info.get_param('role_id'), 1, 3, default=None)
         content = str_checker(info.get_param('content'), is_html_encode=True)
+        print(session.get('role'))
         if session.get('role') == 1:
             if user_object.update(user_id, role_id=role_id) is None:
                 return self.error_404('用户不存在')
             else:
-                self.succeed('用户更新成功')
+                return self.succeed('用户更新信息成功')
         if session.get('admin_user_id') == user_id:
-            if username is None:
-                return self.error_400('用户名长度需要需要在5-20个字符之间')
-            if password is None:
-                return self.error_400('密码不符合要求')
-            if user_object.update(user_id, username=username, password=sha256(password), content=content) is None:
+            if user_object.update(user_id, username=username, content=content) is None:
                 return self.error_404('用户不存在')
             else:
-                self.succeed('用户更新成功')
-        return self.error_403('用户更新失败')
+                return self.succeed('用户更新信息成功')
+        return self.error_403('用户更新信息失败')
 
     def delete(self, user_id):
         """
@@ -81,11 +77,11 @@ class UserList(BaseResource):
         :return:
         """
         info = Request()
-        username = str_checker(info.get_param('username'), is_html_encode=True)
+        username = str_checker(info.get_param('username'), is_html_encode=False)
         page_size = int_checker(info.get_param('page_size', 10), 5, 50, default=10)
         page_index = int_checker(info.get_param('page_index', 1), 1, default=1)
-        user_list, page_info = User.get_list(username, page_size, page_index)
-        return self.succeed('查询成功', {'user_list': user_list, 'page_info': page_info})
+        user_info = User.get_list(username, page_size, page_index)
+        return self.succeed('查询成功', {'user_list': user_info.get('list'), 'page_info': user_info.get('page_info')})
 
     def post(self):
         """
@@ -103,8 +99,8 @@ class UserList(BaseResource):
         if password is None:
             return self.error_400('密码不符合要求')
         if user_object.check_username(username):
-            user_object.create(username=username, password=sha256(password),
-                               content=str_checker(info.get_param('content'), is_html_encode=True),
+            user_object.create(username=username, password=sha256(password.encode('utf-8')).hexdigest(),
+                               content=str_checker(info.get_param('content'), is_html_encode=True, default=''),
                                role_id=int_checker(info.get_param('role_id'), 1, 3, default=3))
             return self.succeed('用户创建成功')
         else:
