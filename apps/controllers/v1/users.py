@@ -14,6 +14,7 @@ from common.utils.base_resource import BaseResource
 from common.utils.format_request import Request
 from common.utils.value_checker import int_checker, str_checker
 
+
 # TODO 需要加一个改密码的功能
 class UserOperator(BaseResource):
     def get(self, user_id):

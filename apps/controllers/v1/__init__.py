@@ -10,6 +10,8 @@ from application import restful
 from .application import App, AppList, AppToken
 from .users import UserList, UserOperator
 
+# for resource addition
+
 restful.add_resource(AppToken, '/v1/app/token/<app_name>')
 restful.add_resource(App, '/v1/app/<app_name>')
 restful.add_resource(AppList, '/v1/app')

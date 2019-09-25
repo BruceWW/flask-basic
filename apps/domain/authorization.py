@@ -31,6 +31,7 @@ class Authorization(object):
             session['admin_user_id'] = info.id
             session['admin_user'] = info.username
             session['role'] = info.role_id
+            session['lang'] = 'ch'
             return True
 
     @staticmethod
@@ -39,7 +40,5 @@ class Authorization(object):
         用户登出
         :return:
         """
-        del session['admin_user_id']
-        del session['admin_user']
-        del session['role']
+        session.clear()
         return True

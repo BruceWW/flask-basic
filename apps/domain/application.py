@@ -48,7 +48,7 @@ class Application(BaseDBOperator):
         :param app_name:
         :return:
         """
-        new_token = self.create_token()
+        new_token = self.create_token(app_name)
         db.session.query(AppInfo).filter(AppInfo.name == app_name).update(
             {AppInfo.token: new_token, AppInfo.create_time: time(),
              AppInfo.create_user_id: session.get('admin_user_id')})
