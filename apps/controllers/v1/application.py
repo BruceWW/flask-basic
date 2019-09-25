@@ -101,7 +101,14 @@ class AppToken(BaseResource):
         :param app_name:
         :return:
         """
-        pass
+        app = Application()
+        if not app.check_role():
+            return self.error_403('没有权限操作应用')
+        app_id = app.get_app_id_by_name(app_name)
+        if not app_id:
+            return self.error_404('应用名错误')
+        info = app.query(app_id)
+        return self.succeed('应用token查询成功', {'token': info.get('token')})
 
     def put(self, app_name):
         """
