@@ -112,8 +112,11 @@ def str_checker(value, min_length=None, max_length=None, min_line=True, max_line
         if checker is None:
             if default is None:
                 return None
-            return escape(default) if is_html_encode else default
+            result = escape(default) if is_html_encode else default
         else:
-            return escape(checker) if is_html_encode else checker
+            result = escape(checker) if is_html_encode else default
+        return result
     except TypeError:
+        return escape(default) if is_html_encode else default
+    except AttributeError:
         return escape(default) if is_html_encode else default

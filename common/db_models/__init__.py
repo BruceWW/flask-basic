@@ -11,6 +11,7 @@ from flask import session
 from sqlalchemy import Column, Integer
 
 from application import app
+from common.utils.format_time import stamp_to_date
 
 
 def db_name_prefix(name):
@@ -53,4 +54,9 @@ class BaseDB(object):
         result = {}
         for attribute in attributes:
             result[attribute] = getattr(self, attribute)
+            if '_time' in attribute:
+                if result[attribute] == 0:
+                    result[attribute] = None
+                else:
+                    result[attribute] = stamp_to_date(result[attribute], ymd=0)
         return result

@@ -40,7 +40,7 @@ class Application(BaseDBOperator):
         :param app_name: 应用名
         :return:
         """
-        return sha256('%s_%d' % (app_name, int(time())))
+        return sha256(('%s_%d' % (app_name, int(time()))).encode('utf-8')).hexdigest()
 
     def update_token(self, app_name):
         """
@@ -50,8 +50,8 @@ class Application(BaseDBOperator):
         """
         new_token = self.create_token(app_name)
         db.session.query(AppInfo).filter(AppInfo.name == app_name).update(
-            {AppInfo.token: new_token, AppInfo.create_time: time(),
-             AppInfo.create_user_id: session.get('admin_user_id')})
+            {AppInfo.token: new_token, AppInfo.update_time: time(),
+             AppInfo.update_user_id: session.get('admin_user_id')})
         db.session.commit()
         return True
 
@@ -79,12 +79,12 @@ class Application(BaseDBOperator):
         app_list = db.session.query(AppInfo).filter(
             and_(AppInfo.name.like('%%%s%%' % app_name), AppInfo.is_del == 0)).slice(
             current_num - page_size, current_num).all()
-        app_num = db.session.query(func.count(AppInfo.id)).filter(
+        app_num = len(db.session.query(func.count(AppInfo.id)).filter(
             and_(AppInfo.name.like('%%%s%%' % app_name), AppInfo.is_del == 0)).slice(
-            current_num - page_size, current_num).all()
+            current_num - page_size, current_num).all())
         return {'list': app_list,
-                'page_info': {'page_num': app_num / page_size, 'page_index': page_index, 'page_size': page_size,
-                              'total_num': app_num}}
+                'page_info': {'page_num': int(app_num / page_size) + 1, 'page_index': page_index,
+                              'page_size': page_size, 'total_num': app_num}}
 
     def create(self, **kwargs):
         """
@@ -102,7 +102,7 @@ class Application(BaseDBOperator):
         :param app_name: 应用名
         :return:
         """
-        app_info = db.session.query(AppInfo).filter(AppInfo.name == app_name).filter()
+        app_info = db.session.query(AppInfo).filter(and_(AppInfo.name == app_name, AppInfo.is_del == 0)).first()
         if app_info is None:
             return False
         else:

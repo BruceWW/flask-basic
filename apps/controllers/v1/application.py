@@ -22,8 +22,8 @@ class App(BaseResource):
         :return:
         """
         app_name = str_checker(app_name, is_html_encode=True)
-        app_info = Application().get_app_id_by_name(app_name)
-        if app_info is None:
+        app_info = Application().get_info_by_app_name(app_name)
+        if app_info is False:
             return self.error_404('应用：%s查询失败' % app_name)
         else:
             return self.succeed('应用查找成功', app_info)
@@ -71,8 +71,8 @@ class AppList(BaseResource):
         app_name = str_checker(info.get_param('app_name'), is_html_encode=True)
         page_size = int_checker(info.get_param('page_size', 10), 5, 50, default=10)
         page_index = int_checker(info.get_param('page_index', 1), 1, default=1)
-        app_list, page_info = Application.get_list(app_name, page_size, page_index)
-        return self.succeed('查询成功', {'app_list': app_list, 'page_info': page_info})
+        app_info = Application.get_list(app_name, page_size, page_index)
+        return self.succeed('查询成功', {'app_list': app_info.get('list'), 'page_info': app_info.get('page_info')})
 
     def post(self):
         """
@@ -83,13 +83,13 @@ class AppList(BaseResource):
         if not app.check_role():
             abort(403, '没有权限操作应用')
         info = Request()
-        app_name = str_checker(info.get_param('app_name'), 5, 50, default=True, is_html_encode=True)
-        content = str_checker(info.get_param('content'), default=True, is_html_encode=True)
-        if app_name is None:
+        app_name = str_checker(info.get_param('app_name'), 5, 50, default='', is_html_encode=True)
+        if app_name is None or app_name == '':
             abort(400, '应用名长度需要需要在5-50个字符之间')
-        if not app_name.get_app_id_by_name(app_name):
-            app.create(name=app_name, content=content)
-            return self.succeed('应用创建成功')
+        content = str_checker(info.get_param('content'), default='', is_html_encode=True)
+        if not app.get_app_id_by_name(app_name):
+            app_id = app.create(name=app_name, content=content)
+            return self.succeed('应用创建成功', {'app_id': app_id})
         else:
             return self.error_400('应用名已被占用')
 

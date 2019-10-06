@@ -47,8 +47,8 @@ class User(BaseDBOperator):
             user_list[i] = {'user_id': user_list[i][0], 'user_name': user_list[i][1], 'content': user_list[i][2],
                             'role': user_list[i][3]}
         return {'list': user_list,
-                'page_info': {'page_num': user_num / page_size, 'page_index': page_index, 'page_size': page_size,
-                              'total_num': user_num}}
+                'page_info': {'page_num': int(user_num / page_size) + 1, 'page_index': page_index,
+                              'page_size': page_size, 'total_num': user_num}}
 
     @staticmethod
     def check_username(username):

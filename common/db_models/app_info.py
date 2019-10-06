@@ -18,5 +18,7 @@ class AppInfo(BaseDB, db.Model):
     app_code = Column(String(50), default='', comment='应用code')
     is_del = Column(SmallInteger, default=0, comment='是否删除：0，否；1，是')
     create_user_id = Column(Integer, default=0, comment='创建人id')
+    update_user_id = Column(Integer, default=0, comment='最近更新人id')
     create_time = Column(Integer, default=0, comment='创建时间')
+    update_time = Column(Integer, default=0, comment='最近更新时间')
     token = Column(String(64), default='', comment='应用token')
