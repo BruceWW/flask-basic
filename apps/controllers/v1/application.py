@@ -122,5 +122,5 @@ class AppToken(BaseResource):
             return self.error_403('没有权限操作应用')
         if not app.get_app_id_by_name(app_name):
             return self.error_404('应用名错误')
-        app.update_token(app_name)
-        return self.succeed('应用token更新成功')
+        new_token = app.update_token(app_name)
+        return self.succeed('应用token更新成功', {'token': new_token})

@@ -9,6 +9,7 @@ from sqlalchemy import and_, func
 
 from application import db
 from common.db_models.users import Users
+from common.db_models.roles import Roles
 from common.utils.base_db_operator import BaseDBOperator
 
 
@@ -42,10 +43,9 @@ class User(BaseDBOperator):
                                                                                 current_num).all()
         user_num = db.session.query(func.count(Users.id)).filter(
             and_(Users.username.like('%%%s%%' % username), Users.is_del == 0)).first()[0]
-        # TODO 需要把role转换为角色名称
         for i in range(len(user_list)):
             user_list[i] = {'user_id': user_list[i][0], 'user_name': user_list[i][1], 'content': user_list[i][2],
-                            'role': user_list[i][3]}
+                            'role': db.session.query(Roles.name).filter(Roles.id == user_list[i][3]).first()[0]}
         return {'list': user_list,
                 'page_info': {'page_num': int(user_num / page_size) + 1, 'page_index': page_index,
                               'page_size': page_size, 'total_num': user_num}}

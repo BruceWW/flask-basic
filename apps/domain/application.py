@@ -53,7 +53,7 @@ class Application(BaseDBOperator):
             {AppInfo.token: new_token, AppInfo.update_time: time(),
              AppInfo.update_user_id: session.get('admin_user_id')})
         db.session.commit()
-        return True
+        return new_token
 
     @staticmethod
     def check_role():
