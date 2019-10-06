@@ -26,6 +26,8 @@ class User(BaseDBOperator):
             info.pop('password')
             info.pop('create_user_id')
             info.pop('create_time')
+            info['role'] = db.session.query(Roles.name).filter(Roles.id == info['role_id']).first()[0]
+            info.pop('role_id')
         return info
 
     @staticmethod
