@@ -13,8 +13,8 @@ from application import db
 
 class Function(BaseDB, db.Model):
     __tablename__ = db_name_prefix('function')
-    name = Column(String(20), default='', comment='环境名称')
-    content = Column(Text, default='', comment='角色说明')
+    name = Column(String(20), default='', comment='方法名称')
+    content = Column(Text, default='', comment='方法说明')
     is_del = Column(SmallInteger, default=0, comment='是否删除：0，否；1，是')
     env_id = Column(Integer, default=0, comment='环境id')
     app_id = Column(Integer, default=0, comment='应用id')
