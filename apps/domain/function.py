@@ -13,7 +13,32 @@ from application import db
 from sqlalchemy import and_, func
 
 
-class Function(BaseDBOperator):
+class ParamFormat(object):
+    def __init__(self, info):
+        self._info = info
+        self._params_dict = {'env_id': None, 'app_id': None, 'platform_num': 0, 'is_grey': None, 'name': None,
+                             'content': None, 'page_size': 10, 'page_index': 1}
+        self._result = dict()
+
+    def get_search_params(self):
+        """
+        获取接口相关的参数
+        :return:
+        """
+        self._result = dict()
+        for key, value in self._params_dict:
+            self._result[key] = self._info.get_param(key, value)
+        self._check_search_params()
+        return self._result
+
+    def _check_search_params(self):
+        if self._result.get('env_id') is None:
+            self._result['env_id'] = 0
+        if self._result.get('app_id') is None:
+            self._result['app_id'] = 0
+
+
+class Func(BaseDBOperator):
     def __init__(self):
         super().__init__(Function)
 

@@ -17,7 +17,7 @@ class Plat(BaseDBOperator):
         super().__init__(Platform)
 
     @staticmethod
-    def get_list(name):
+    def get_list(name=''):
         """
         获取平台列表，没有分页功能
         :param name:
