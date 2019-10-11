@@ -66,6 +66,13 @@ class Plat(BaseDBOperator):
             base_str[i - 1] = '1'
         for i in platform_count_list:
             pass
-        # TODO
+        # TODO 
 
+    @staticmethod
+    def calc_platform_num(num_list):
+        """
 
+        :param num_list:
+        :return:
+        """
+        return 2 ** (sum(num_list)) / 2

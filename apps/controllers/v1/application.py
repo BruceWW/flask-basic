@@ -68,7 +68,7 @@ class AppList(BaseResource):
         :return:
         """
         info = Request()
-        app_name = str_checker(info.get_param('app_name'), is_html_encode=True)
+        app_name = str_checker(info.get_param('app_name'))
         page_size = int_checker(info.get_param('page_size', 10), 5, 50, default=10)
         page_index = int_checker(info.get_param('page_index', 1), 1, default=1)
         app_info = Application.get_list(app_name, page_size, page_index)

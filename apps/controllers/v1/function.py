@@ -5,9 +5,10 @@
 # @Site    :
 # @File    : function
 # @Software: PyCharm
+from apps.domain.function import Func, ParamFormat
+from apps.domain.platform import Plat
 from common.utils.base_resource import BaseResource
 from common.utils.format_request import Request
-from apps.domain.function import Func, ParamFormat
 
 
 class Function(BaseResource):
@@ -28,7 +29,16 @@ class Function(BaseResource):
         :param function_id:
         :return:
         """
-        info = Request()
+        try:
+            info = ParamFormat(Request()).get_operate_params()
+        except ValueError as e:
+            return self.error_400(str(e))
+        try:
+            info['platform_num'] = Plat.calc_platform_num(info.get('platform_num').split(','))
+        except AttributeError:
+            return self.error_400('平台参数错误')
+        Func().update(function_id, **info)
+        return self.succeed('接口%d更新成功' % function_id)
 
     def delete(self, function_id):
         """
@@ -62,4 +72,19 @@ class FunctionList(BaseResource):
 
         :return:
         """
-        info = Request()
+        try:
+            info = ParamFormat(Request()).get_operate_params()
+        except ValueError as e:
+            return self.error_400(str(e))
+        func = Func()
+        if func.check_name(info.get('name'), info.get('app_id'), info.get('env_id'), info.get('version')) is False:
+            return self.error_400('路由名已被占用')
+        if func.check_function_name(info.get('name'), info.get('app_id'), info.get('env_id'),
+                                    info.get('version')) is False:
+            return self.error_400('函数名已被占用')
+        try:
+            info['platform_num'] = Plat.calc_platform_num(info.get('platform_num').split(','))
+        except AttributeError:
+            return self.error_400('平台参数错误')
+        function_id = func.create(**info)
+        return self.succeed('接口创建成功', {'function_id': function_id})

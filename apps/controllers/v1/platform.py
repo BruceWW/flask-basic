@@ -5,10 +5,10 @@
 # @Site    :
 # @File    : platform
 # @Software: PyCharm
-from common.utils.format_request import Request
-from common.utils.base_resource import BaseResource
-from apps.domain.platform import Plat
 from application import cache, app
+from apps.domain.platform import Plat
+from common.utils.base_resource import BaseResource
+from common.utils.format_request import Request
 
 
 class Platform(BaseResource):
