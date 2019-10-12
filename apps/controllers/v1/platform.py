@@ -12,7 +12,7 @@ from common.utils.format_request import Request
 
 
 class Platform(BaseResource):
-    @cache.cached(app.config.get('PERMANENT_SESSION_LIFETIME'))
+    # @cache.cached(app.config.get('PERMANENT_SESSION_LIFETIME'))
     def get(self):
         """
         根据名称查询平台，提供缓存
