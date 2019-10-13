@@ -7,7 +7,7 @@
 # @Software: PyCharm
 from sqlalchemy import and_, func, text
 
-from application import db
+from application import db, app, storage_redis
 from common.db_models.function import Function
 from common.utils.base_db_operator import BaseDBOperator
 from common.utils.value_checker import str_checker, int_checker, float_checker
@@ -59,6 +59,9 @@ class ParamFormat(object):
         if self._result.get('app_id') == 0:
             raise ValueError('应用参数错误')
         self._result['is_grey'] = int_checker(self._result.get('is_grey'), 0, default=0)
+        self._result['platform_num'] = int_checker(self._result.get('platform_num'), 0, default=0)
+        if self._result.get('platform_num') == 0:
+            raise ValueError('平台参数异常')
         self._result['name'] = str_checker(self._result.get('name'), 5, 100, is_html_encode=True, default=None)
         if self._result['name'] is None:
             raise ValueError('路由名参数错误')
@@ -95,13 +98,24 @@ class Func(BaseDBOperator):
         super().__init__(Function)
 
     @staticmethod
-    def create_redis_key(*args):
+    def create_redis_key(args):
         """
         生成redis的键名
         :param args:
         :return:
         """
+        args = (str(arg) for arg in args)
         return '.'.join(args)
+
+    def create_redis_key_by_id(self, function_id):
+        """
+        根据接口id创建redis的键名
+        :param function_id:
+        :return:
+        """
+        return self.create_redis_key(
+            db.session.query(Function.app_id, Function.env_id, Function.platform_num, Function.name,
+                             Function.version).filter(Function.id == function_id).first())
 
     @staticmethod
     def format_result(result=None):
@@ -122,6 +136,69 @@ class Func(BaseDBOperator):
         初始化redis数据
         :return:
         """
+        # 清空原有hash的数据
+        storage_redis.delete(app.config.get('API_CACHE'))
+        tmp_list = db.session.query(Function.app_id, Function.env_id, Function.platform_num, Function.name,
+                                    Function.version, Function.url).filter(Function.is_del == 0).all()
+        info = dict()
+        for item in tmp_list:
+            info[self.create_redis_key((item[0], item[1], item[2], item[3], item[4]))] = item[5]
+        storage_redis.hmset(app.config.get('API_CACHE'), info)
+        return True
+
+    @staticmethod
+    def update_redis(key, value):
+        """
+        更新数据
+        :param key:
+        :param value:
+        :return:
+        """
+        storage_redis.hset(app.config.get('API_CACHE'), key, value)
+
+    @staticmethod
+    def del_redis(key):
+        """
+        删除redis数据
+        :param key:
+        :return:
+        """
+        storage_redis.hdel(app.config.get('API_CACHE'), key)
+        return True
+
+    def delete(self, instance_id, is_real=False):
+        """
+        重写删除方法，删除同时更新redis数据
+        :param instance_id:
+        :param is_real:
+        :return:
+        """
+        res = super().delete(instance_id, is_real)
+        if res is not None:
+            self.del_redis(self.create_redis_key_by_id(instance_id))
+        return res
+
+    def update(self, instance_id, **kwargs):
+        """
+        重新更新方法，更新同时更新redis数据
+        :param instance_id:
+        :param kwargs:
+        :return:
+        """
+        res = super().update(instance_id, **kwargs)
+        if res is not None:
+            key = self.create_redis_key((kwargs.get('app_id'), kwargs.get('env_id'), kwargs.get('platform_num'),
+                                         kwargs.get('name'), kwargs.get('version')))
+            self.update_redis(key, kwargs.get('url'))
+        return res
+
+    def create(self, **kwargs):
+        res = super().create(**kwargs)
+        if res is not None:
+            key = self.create_redis_key((kwargs.get('app_id'), kwargs.get('env_id'), kwargs.get('platform_num'),
+                                         kwargs.get('name'), kwargs.get('version')))
+            self.update_redis(key, kwargs.get('url'))
+        return res
 
     def get_fun(self, env_id, app_id, platform_num, is_grey, name, version):
         """
@@ -137,35 +214,39 @@ class Func(BaseDBOperator):
         pass
 
     @staticmethod
-    def check_name(name, app_id, env_id, version):
+    def check_name(name, app_id, env_id, version, platform_num):
         """
         检查相同的app id，环境以及版本是否有重名的路由名称
         :param name: 路由名称
         :param app_id: 应用id
         :param env_id: 环境id
         :param version: 版本号
+        :param platform_num: 平台id
         :return:
         """
         if db.session.query(Function.id).filter(
                 and_(Function.name == name, Function.app_id == app_id, Function.env_id == env_id,
-                     Function.version == version, Function.is_del == 0)).first() is None:
+                     Function.version == version, Function.is_del == 0,
+                     Function.platform_num == platform_num)).first() is None:
             return True
         else:
             return False
 
     @staticmethod
-    def check_function_name(function_name, app_id, env_id, version):
+    def check_function_name(function_name, app_id, env_id, version, platform_num):
         """
         检查相同的app id，环境以及版本是否有重名的函数名称
         :param function_name: 函数名称
         :param app_id: 应用id
         :param env_id: 环境id
         :param version: 版本号
+        :param platform_num: 平台id
         :return:
         """
         if db.session.query(Function.id).filter(
                 and_(Function.function_name == function_name, Function.app_id == app_id, Function.env_id == env_id,
-                     Function.version == version, Function.is_del == 0)).first() is None:
+                     Function.version == version, Function.is_del == 0,
+                     Function.platform_num == platform_num)).first() is None:
             return True
         else:
             return False

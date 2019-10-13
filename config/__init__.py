@@ -48,5 +48,10 @@ class BaseConfig(object):
     SESSION_USE_SIGNER = True
     SESSION_TYPE = 'redis'
 
+    # redis基础操作键值
+    DDOS_IP = 'ddos.ip'
+    BLACK_IP_LIST = 'ip.list.black'
+    API_CACHE = 'api.cache'
+
     # 开启数据库会话
     SQLQLCHEMY_COMMIT_TEARDOWN = True

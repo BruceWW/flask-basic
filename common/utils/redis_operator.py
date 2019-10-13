@@ -6,6 +6,9 @@
 # @File    : redis_operator
 # @Software: PyCharm
 from application import storage_redis
+from application import app
+
+from exception.ddos_exception import DDosException
 
 
 class RedisOperator(object):
@@ -48,3 +51,16 @@ class RedisOperator(object):
         """
         storage_redis.delete(key)
         return True
+
+    @staticmethod
+    def _ip_protector(ip):
+        """
+        根据ip进行穿刺查询保护
+        :param ip:
+        :return:
+        """
+        key = app.config.get('DDOS_IP')
+        value = storage_redis.get(key, 0) + 1
+        if value > 5:
+            raise DDosException('暂时无法访问，请10分钟后再次尝试')
+        storage_redis.set('%s.%s' % (app.config.get(), ip), value, app.config.get('PERMANENT_SESSION_LIFETIME'))

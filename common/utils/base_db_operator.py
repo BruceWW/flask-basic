@@ -43,7 +43,8 @@ class BaseDBOperator(object):
         :return:
         """
         if is_real is False:
-            return self.update(instance_id, is_del=1)
+            # 为避免update重写对删除造成影响
+            return BaseDBOperator(self._abstraction).update(instance_id, is_del=1)
         else:
             instance = self._abstraction.query.filter(self._abstraction.id == instance_id).first()
             db.session.delete(instance)
