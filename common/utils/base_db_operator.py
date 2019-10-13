@@ -8,6 +8,7 @@
 from time import time
 
 from flask import session
+from sqlalchemy import and_, text
 
 from application import db
 
@@ -56,7 +57,11 @@ class BaseDBOperator(object):
         :param kwargs: 更新的数据
         :return:
         """
-        instance = self._abstraction.query.filter(self._abstraction.id == instance_id).first()
+        if kwargs.get('check_del', True) is True:
+            check_del = self._abstraction.is_del == 0
+        else:
+            check_del = text('')
+        instance = self._abstraction.query.filter(and_(self._abstraction.id == instance_id, check_del)).first()
         if instance is None:
             return None
         for key, value in kwargs.items():
@@ -69,13 +74,19 @@ class BaseDBOperator(object):
         db.session.commit()
         return instance.id
 
-    def query(self, instance_id):
+    def query(self, instance_id, check_del=True):
         """
         根据id查询数据，并转换成字典类型
         :param instance_id:
+        :param check_del: 是否需要检查被删除数据
         :return:
         """
-        instance = db.session.query(self._abstraction).filter(self._abstraction.id == instance_id).first()
+        if check_del is True:
+            check_del = self._abstraction.is_del == 0
+        else:
+            check_del = text('')
+        instance = db.session.query(self._abstraction).filter(
+            and_(self._abstraction.id == instance_id, check_del)).first()
         if instance is None:
             return None
         else:

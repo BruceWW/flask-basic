@@ -25,9 +25,6 @@ class Config(BaseConfig):
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://%s:%s@%s:%s/%s' % (
         DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE)
 
-    # 开启数据库会话
-    SQLQLCHEMY_COMMIT_TEARDOWN = True
-
     # redis 库
     STORAGE_REDIS_HOST = '127.0.0.1'
     STORAGE_REDIS_PORT = '6379'

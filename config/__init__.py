@@ -47,3 +47,6 @@ class BaseConfig(object):
     PERMANENT_SESSION_LIFETIME = 600
     SESSION_USE_SIGNER = True
     SESSION_TYPE = 'redis'
+
+    # 开启数据库会话
+    SQLQLCHEMY_COMMIT_TEARDOWN = True
