@@ -65,7 +65,9 @@ class FunctionList(BaseResource):
             return self.succeed('查询成功',
                                 {'app_list': function_info.get('list'), 'page_info': function_info.get('page_info')})
         except ValueError as e:
-            self.error_400(str(e))
+            return self.error_400(str(e))
+        except BaseException as e:
+            return self.error_500(str(e))
 
     def post(self):
         """

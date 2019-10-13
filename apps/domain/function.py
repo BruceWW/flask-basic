@@ -5,7 +5,7 @@
 # @Site    :
 # @File    : function
 # @Software: PyCharm
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, text
 
 from application import db
 from common.db_models.function import Function
@@ -42,7 +42,7 @@ class ParamFormat(object):
         return self._result
 
     def _trans_dict(self):
-        for key, value in self._params_dict:
+        for key, value in self._params_dict.items():
             self._result[key] = self._info.get_param(key, value)
 
     def _check_operate_params(self):
@@ -187,29 +187,29 @@ class Func(BaseDBOperator):
         """
         # 操作查询条件
         if env_id == 0:
-            env_id = ''
+            env_id = text('')
         else:
             env_id = Function.env_id == env_id
         if app_id == 0:
-            app_id = ''
+            app_id = text('')
         else:
             app_id = Function.app_id == app_id
-        if platform_num == 0:
-            platform_num = ''
+        if platform_num == 0 or platform_num is None:
+            platform_num = text('')
         else:
             platform_num = Function.platform_num == platform_num
         if is_grey is None:
-            is_grey = ''
+            is_grey = text('')
         else:
             is_grey = Function.is_grey == is_grey
         if name is None:
-            name = ''
+            name = text('')
         else:
             name = Function.name.like('%%%s%%' % name)
         if content is None:
-            content = ''
+            content = text('')
         else:
-            content = Function.name.like('%%%s%%' % content)
+            content = Function.content.like('%%%s%%' % content)
         current_num = page_size * page_index
         where = and_(env_id, app_id, platform_num, is_grey, name, content, Function.is_del == 0)
         function_list = db.session.query(Function).filter(where).slice(current_num - page_size, current_num).all()
