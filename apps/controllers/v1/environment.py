@@ -5,13 +5,11 @@
 # @Site    :
 # @File    : environment
 # @Software: PyCharm
-from common.utils.base_resource import BaseResource
 from apps.domain.environment import Env
-from application import cache
+from common.utils.base_resource import BaseResource
 
 
 class Environment(BaseResource):
-    # @cache.cached
     def get(self):
         """
         获取环境列表， 采用缓存提升查询效率，且不设置失效时间

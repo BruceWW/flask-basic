@@ -19,8 +19,6 @@ restful.add_resource(App, '/v1/app/<app_name>')
 restful.add_resource(AppList, '/v1/app')
 restful.add_resource(UserOperator, '/v1/user/<user_id>')
 restful.add_resource(UserList, '/v1/user')
-
-# TODO 已调试，待优化
 restful.add_resource(Environment, '/v1/env')
 restful.add_resource(Platform, '/v1/platform')
 

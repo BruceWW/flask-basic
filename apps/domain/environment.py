@@ -10,7 +10,7 @@ from sqlalchemy import and_
 from application import db
 from common.db_models.environment import Environment
 from common.utils.base_db_operator import BaseDBOperator
-
+from application import cache
 
 class Env(BaseDBOperator):
     def __init__(self):
@@ -30,6 +30,7 @@ class Env(BaseDBOperator):
         return info[0]
 
     @staticmethod
+    @cache.cached()
     def get_list():
         """
         获取环境列表，没有分页功能，后续可以增加

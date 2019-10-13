@@ -10,6 +10,7 @@ from sqlalchemy import and_, func
 from application import db
 from common.db_models.platform import Platform
 from common.utils.base_db_operator import BaseDBOperator
+from application import app, cache
 
 
 class Plat(BaseDBOperator):
@@ -17,6 +18,7 @@ class Plat(BaseDBOperator):
         super().__init__(Platform)
 
     @staticmethod
+    @cache.memoize(app.config.get('PERMANENT_SESSION_LIFETIME'))
     def get_list(name=''):
         """
         获取平台列表，没有分页功能
@@ -66,7 +68,7 @@ class Plat(BaseDBOperator):
             base_str[i - 1] = '1'
         for i in platform_count_list:
             pass
-        # TODO 
+        # TODO
 
     @staticmethod
     def calc_platform_num(num_list):

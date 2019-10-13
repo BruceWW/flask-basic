@@ -37,7 +37,7 @@ def init_app(env):
     db.init_app(app)
     # 初始化redis参数
     storage_redis.init_app(app)
-    # cache.init_app(app)
+    cache.init_app(app)
     session.init_app(app)
 
     # 设置日志输出以及回滚周期
