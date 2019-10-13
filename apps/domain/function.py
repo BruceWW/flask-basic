@@ -69,7 +69,7 @@ class ParamFormat(object):
         self._result['version'] = float_checker(self._result.get('version'), 0.0, default=0.0)
         if self._result.get('version') == 0.0:
             raise ValueError('版本号异常')
-        self._result['function_name'] = str_checker(self._result.get('content'), 5, 255, is_html_encode=True,
+        self._result['function_name'] = str_checker(self._result.get('function_name'), 5, 255, is_html_encode=True,
                                                     default=None)
         if self._result.get('function_name') is None:
             raise ValueError('函数名称参数异常')
@@ -148,7 +148,7 @@ class Func(BaseDBOperator):
         """
         if db.session.query(Function.id).filter(
                 and_(Function.name == name, Function.app_id == app_id, Function.env_id == env_id,
-                     Function.version == version)).first() is None:
+                     Function.version == version, Function.is_del == 0)).first() is None:
             return True
         else:
             return False
@@ -165,7 +165,7 @@ class Func(BaseDBOperator):
         """
         if db.session.query(Function.id).filter(
                 and_(Function.function_name == function_name, Function.app_id == app_id, Function.env_id == env_id,
-                     Function.version == version)).first() is None:
+                     Function.version == version, Function.is_del == 0)).first() is None:
             return True
         else:
             return False

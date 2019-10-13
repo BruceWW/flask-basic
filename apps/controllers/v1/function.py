@@ -87,6 +87,8 @@ class FunctionList(BaseResource):
         try:
             info['platform_num'] = Plat.calc_platform_num(info.get('platform_num').split(','))
         except AttributeError:
-            return self.error_400('平台参数错误')
+            return self.error_400('平台参数错误，错误类型1')
+        except ValueError:
+            return self.error_400('平台参数错误，错误类型2')
         function_id = func.create(**info)
         return self.succeed('接口创建成功', {'function_id': function_id})

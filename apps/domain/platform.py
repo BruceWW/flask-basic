@@ -77,4 +77,4 @@ class Plat(BaseDBOperator):
         :param num_list:
         :return:
         """
-        return 2 ** (sum(num_list)) / 2
+        return int(sum([2 ** int(i) for i in num_list]) /2)

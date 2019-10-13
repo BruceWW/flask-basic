@@ -12,6 +12,7 @@ from common.db_models.environment import Environment
 from common.utils.base_db_operator import BaseDBOperator
 from application import cache
 
+
 class Env(BaseDBOperator):
     def __init__(self):
         super().__init__(Environment)
