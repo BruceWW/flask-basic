@@ -5,9 +5,6 @@
 # @Site    :
 # @File    : application
 # @Software: PyCharm
-
-from flask import abort
-
 from apps.domain.application import Application
 from common.utils.base_resource import BaseResource
 from common.utils.format_request import Request
@@ -36,7 +33,7 @@ class App(BaseResource):
         """
         app = Application()
         if not app.check_role():
-            abort(403, '没有权限操作应用')
+            return self.error_403('没有权限操作应用')
         info = Request()
         content = str_checker(info.get_param('content'), default=True, is_html_encode=True)
         app_id = app.get_app_id_by_name(app_name)
@@ -81,11 +78,11 @@ class AppList(BaseResource):
         """
         app = Application()
         if not app.check_role():
-            abort(403, '没有权限操作应用')
+            return self.error_403('没有权限操作应用')
         info = Request()
         app_name = str_checker(info.get_param('app_name'), 5, 50, default='', is_html_encode=True)
         if app_name is None or app_name == '':
-            abort(400, '应用名长度需要需要在5-50个字符之间')
+            return self.error_400('应用名长度需要需要在5-50个字符之间')
         content = str_checker(info.get_param('content'), default='', is_html_encode=True)
         if not app.get_app_id_by_name(app_name):
             app_id = app.create(name=app_name, content=content)

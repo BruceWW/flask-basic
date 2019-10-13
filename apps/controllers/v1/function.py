@@ -6,7 +6,6 @@
 # @File    : function
 # @Software: PyCharm
 from apps.domain.function import Func, ParamFormat
-from apps.domain.platform import Plat
 from common.utils.base_resource import BaseResource
 from common.utils.format_request import Request
 
