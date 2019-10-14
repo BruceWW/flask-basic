@@ -52,6 +52,7 @@ class BaseConfig(object):
     DDOS_IP = 'ddos.ip'
     BLACK_IP_LIST = 'ip.list.black'
     API_CACHE = 'api.cache'
+    API_LIST = 'api.list'
 
     # 开启数据库会话
     SQLQLCHEMY_COMMIT_TEARDOWN = True

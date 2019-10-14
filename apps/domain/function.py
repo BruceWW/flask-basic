@@ -141,8 +141,15 @@ class Func(BaseDBOperator):
         tmp_list = db.session.query(Function.app_id, Function.env_id, Function.platform_num, Function.name,
                                     Function.version, Function.url).filter(Function.is_del == 0).all()
         info = dict()
+        api_list = dict()
+        api_list.setdefault([])
         for item in tmp_list:
             info[self.create_redis_key((item[0], item[1], item[2], item[3], item[4]))] = item[5]
+            api_list[self.create_redis_key((item[0], item[1], item[2], item[3]))] = api_list.get(
+                self.create_redis_key((item[0], item[1], item[2], item[3]))).append(str(item[4]))
+        for key, value in api_list.items():
+            api_list[key] = ','.join(value)
+        storage_redis.hmset(app.config.get('API_LIST'), api_list)
         storage_redis.hmset(app.config.get('API_CACHE'), info)
         return True
 
